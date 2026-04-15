@@ -37,6 +37,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Habilita CORS para permitir solicitudes desde otros orígenes (cross-origin),
+// como el frontend Angular en otro dominio o puerto
+app.UseCors(options =>
+{
+    options.AllowAnyHeader();
+    options.AllowAnyMethod();
+    options.AllowAnyOrigin(); //permitir solo para desarrollo, en producion no
+});
+
 app.UseAuthorization();
 
 app.MapControllers();

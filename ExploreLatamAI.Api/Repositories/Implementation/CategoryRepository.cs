@@ -22,12 +22,17 @@ namespace ExploreLatamAI.Api.Repositories.Implementation
         public async Task<Category> CreateAsync(Category category)
         {
 
-
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
 
             return category;
+        }
 
+
+
+        public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+        {
+            return await _context.Categories.ToListAsync();
         }
     }
 }

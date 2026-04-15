@@ -50,5 +50,44 @@ namespace ExploreLatamAI.Api.Controllers
 
             return Ok(response);
         }
+
+
+
+
+        //GET:  https://localhost:7263/api/Categories
+        [HttpGet]
+        public async Task<IActionResult> GetAllCategoriesAsync()
+        {
+            // Llama al repositorio para obtener todas las categorías desde la base de datos
+            var categories =  await _categoryRepository.GetAllCategoriesAsync();
+
+            // Se crea una lista vacia de DTOs (Data Transfer Object)
+            // Aqui se almacenara la respuesta que se enviara al cliente
+            var response = new List<CategoryDto>();
+
+            // Se recorre cada categoria obtenida del dominio (modelo interno)
+            foreach (var category in categories)
+            {
+                // Se transforma (mapea) cada entidad Category a un CategoryDto
+                // Esto evita exponer directamente el modelo de dominio
+                response.Add(new CategoryDto
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    UrlHandle = category.UrlHandle,
+                });
+            }
+            return Ok(response);
+
+            // Mapear entidades a DTO usando LINQ (proyeccion)
+            //var response = categories.Select(category => new CategoryDto
+            //{
+            //    Id = category.Id,
+            //    Name= category.Name,
+            //    UrlHandle= category.UrlHandle,
+            //}).ToList();
+            //return Ok(response);
+
+        }
     }
 }
