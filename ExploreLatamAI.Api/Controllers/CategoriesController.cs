@@ -22,8 +22,9 @@ namespace ExploreLatamAI.Api.Controllers
 
 
 
+        //POST:  https://localhost:7263/api/Categories
         [HttpPost]
-        public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
+        public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequestDto request)
         {
             // Mapeo Manual
             // DTO → Entidad (Domain)
@@ -50,8 +51,6 @@ namespace ExploreLatamAI.Api.Controllers
 
             return Ok(response);
         }
-
-
 
 
         //GET:  https://localhost:7263/api/Categories
@@ -89,5 +88,89 @@ namespace ExploreLatamAI.Api.Controllers
             //return Ok(response);
 
         }
+
+
+        //GET:  https://localhost:7263/api/Categories/{id}
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async  Task<IActionResult> GetCategoryById([FromRoute] Guid id)
+        {
+            var existingCategory = await _categoryRepository.GetByIdAsync(id);
+
+            if (existingCategory is null)
+            {
+                return NotFound();
+            }
+
+            var response = new CategoryDto
+            {
+                Id = existingCategory.Id,
+                Name = existingCategory.Name,
+                UrlHandle = existingCategory.UrlHandle,
+            };
+
+            return Ok(response);
+        }
+
+
+        //PUT: https://localhost:7263/api/Categories/{id}
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> EditCategory(
+            [FromRoute] Guid id, 
+            UpdateCategoryRequestDto request)
+        {
+
+            //Convertir DTO a modelo dominio
+            var category = new Category
+            {
+                Id = id,
+                Name = request.Name,
+                UrlHandle = request.UrlHandle
+            };
+
+            // Llamar repositorio
+            category = await _categoryRepository.UpdateAsync(category);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            // Convertir dominio a DTO de respuesta
+            var response = new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle
+            };
+
+            return Ok(response);
+
+        }
+
+        //DELETE: https://localhost:7263/api/Categories/{id}
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
+        {
+           var category = await _categoryRepository.DeleteAsync(id);
+
+            if (category is null)
+            {
+                return NotFound();
+            }
+
+            //Convertir modelo Dominio a Dto
+            var response = new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle
+            };
+
+            return Ok(response);
+        }
+
     }
 }

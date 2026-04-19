@@ -8,7 +8,13 @@ namespace ExploreLatamAI.Api.Repositories.Interface
         // Define las operaciones disponibles para Category
         // Solo trabaja con modelos de dominio
         Task<Category> CreateAsync(Category category);
+        Task<IEnumerable<Category>> GetAllCategoriesAsync(); 
+        Task<Category?> GetByIdAsync(Guid id);
+        Task<Category?> UpdateAsync(Category category);
 
-        Task<IEnumerable<Category>> GetAllCategoriesAsync();  
+        Task<Category?> DeleteAsync(Guid id);
+
+
+
     }
 }
