@@ -1,6 +1,7 @@
 using ExploreLatamAI.Api.Data;
 using ExploreLatamAI.Api.Repositories.Implementation;
 using ExploreLatamAI.Api.Repositories.Interface;
+using ExploreLatamAI.Api.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +24,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Registrar el repositorio en el contenedor de dependencias
 // Permite inyectar ICategoryRepository en otras capas (ej Controllers)
  builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+//Repositorio BlogPost
 
+
+
+////Servicio Geminis
+builder.Services.AddHttpClient<GeminiService>();
+builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
 
 
 var app = builder.Build();

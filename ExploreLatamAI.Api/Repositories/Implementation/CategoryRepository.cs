@@ -16,7 +16,7 @@ namespace ExploreLatamAI.Api.Repositories.Implementation
         // Inyección de dependencias del DbContext
         public CategoryRepository(ApplicationDbContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         // Crea una nueva categoría en la base de datos

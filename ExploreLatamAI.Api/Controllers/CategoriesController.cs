@@ -17,7 +17,7 @@ namespace ExploreLatamAI.Api.Controllers
 
         public CategoriesController(ICategoryRepository categoryRepository)
         {
-            this._categoryRepository = categoryRepository;
+            _categoryRepository = categoryRepository;
         }
 
 
