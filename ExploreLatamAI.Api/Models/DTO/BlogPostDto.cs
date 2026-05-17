@@ -11,5 +11,8 @@
         public DateTime PublishedDate { get; set; }
         public string Author { get; set; }
         public bool IsVisible { get; set; }
+
+        // Relacion con las categorias asociadas al blog
+        public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
     }
 }

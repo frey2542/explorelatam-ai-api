@@ -25,7 +25,10 @@ namespace ExploreLatamAI.Api.Repositories.Implementation
 
         public async Task<IEnumerable<BlogPost>> GetAllBlogPostsAsync()
         {
-            return await _context.BlogPosts.ToListAsync();
+            // Obtenemos todos los posts junto con sus categorias relacionadas
+            return await _context.BlogPosts
+                .Include(x => x.Categories)
+                .ToListAsync();
         }
     }
 }

@@ -17,19 +17,26 @@ namespace ExploreLatamAI.Api.Controllers
 
         private readonly GeminiService _geminiService; // IA
         private readonly IBlogPostRepository _blogPostRepository; // Base de datos
+        private readonly ICategoryRepository _categoryRepository;
 
 
-        public BlogPostController(IBlogPostRepository blogPostRepository, GeminiService geminiService)
+        public BlogPostController(
+            IBlogPostRepository blogPostRepository, 
+            GeminiService geminiService,
+            ICategoryRepository categoryRepository
+            )
         {
             _blogPostRepository = blogPostRepository;
             _geminiService = geminiService;
+            _categoryRepository = categoryRepository;
+
         }
 
 
 
         // POST: https://localhost:7263/api/BlogPost
         [HttpPost]
-        public async Task<IActionResult> CreateBlogPost([FromBody] BlogPostRequestDto request)
+        public async Task<IActionResult> CreateBlogPost([FromBody] CreateBlogPostRequestDto request)
         {
 
 
@@ -44,8 +51,25 @@ namespace ExploreLatamAI.Api.Controllers
                 FeaturedImageUrl = request.FeaturedImageUrl,
                 Author = request.Author,
                 PublishedDate = request.PublishedDate,
-                IsVisible = request.IsVisible
+                IsVisible = request.IsVisible,
+                // Inicializamos la coleccion de categorias relacionadas
+                Categories = new List<Category>()
+
             };
+
+            // Recorremos las categorias enviadas en el request
+            foreach (var categoryGuid in request.Categories)
+            {
+                // Buscamos la categoria existente en la base de datos
+                var existingCategory = await _categoryRepository.GetByIdAsync(categoryGuid);
+
+                // Agregamos la categoria encontrada a la relacion del BlogPost
+                if (existingCategory is not null)
+                {
+                    blogPost.Categories.Add(existingCategory);
+                }
+            }
+
 
             var result = await _blogPostRepository.CreateAsync(blogPost);
 
@@ -61,6 +85,15 @@ namespace ExploreLatamAI.Api.Controllers
                 Author = blogPost.Author,
                 IsVisible = blogPost.IsVisible,
                 PublishedDate = blogPost.PublishedDate,
+                //Respuesta mostraremos las catgeorias que tienen alguna clase e relacion con la entidad
+                // Mapeamos las categorias relacionadas al DTO de respuesta
+                Categories = blogPost.Categories.Select(x => new CategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle  = x.UrlHandle,
+
+                }).ToList(),
             };
 
             return Ok(response);
@@ -141,7 +174,7 @@ namespace ExploreLatamAI.Api.Controllers
             catch (Exception ex)  
             {
                 // Evita exponer detalles internos en producción
-                return StatusCode(500, "Error generando contenido con IA");
+                return StatusCode(500,  ex.Message);
             }
         }
 
@@ -167,12 +200,22 @@ namespace ExploreLatamAI.Api.Controllers
                     PublishedDate = bloPost.PublishedDate,
                     FeaturedImageUrl = bloPost.FeaturedImageUrl,
                     IsVisible = bloPost.IsVisible,
-                    UrlHandle = bloPost.UrlHandle
+                    UrlHandle = bloPost.UrlHandle,
+
+                    Categories = bloPost.Categories.Select(x => new CategoryDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        UrlHandle = x.UrlHandle,
+                    }).ToList()
                 });
             }
 
             return Ok(response);
         }
+
+
+
 
 
 

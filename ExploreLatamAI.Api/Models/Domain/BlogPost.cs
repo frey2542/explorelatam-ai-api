@@ -13,5 +13,10 @@
         public string Author { get; set; }
         public bool IsVisible { get; set; }
 
+
+        // Relacion: muchos a muchos (N:N)
+        // Un blog puede pertenecer a multiples categorias
+        public ICollection<Category> Categories { get; set; }
+
     }
 }

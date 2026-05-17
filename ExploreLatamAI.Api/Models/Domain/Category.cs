@@ -7,5 +7,10 @@
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string UrlHandle { get; set; }
+
+      
+        // Relacion: uno a muchos (1:N)
+        // Una categoria puede estar asociada a multiples publicaciones de blog
+        public ICollection<BlogPost> BlogPosts { get; set; }
     }
 }

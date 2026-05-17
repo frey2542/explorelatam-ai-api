@@ -34,7 +34,7 @@ namespace ExploreLatamAI.Api.Service
                 }
             };
 
-            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={_apiKey}";
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={_apiKey}";
 
             var response = await _httpClient.PostAsync(
                 url,
@@ -47,6 +47,7 @@ namespace ExploreLatamAI.Api.Service
             {
                 throw new Exception($"Gemini error: {response.StatusCode} - {responseContent}");
             }
+            Console.WriteLine("API KEY (INIT): " + _apiKey);
 
             using var jsonDoc = JsonDocument.Parse(responseContent);
 
